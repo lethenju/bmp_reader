@@ -2,7 +2,7 @@ all: output
 
 OBJECTS_DIR=objects
 SRC_DIR=src
-EXE_NAME=learn
+EXE_NAME=output
 
 output: main.o
 	gcc -o $(EXE_NAME) $(OBJECTS_DIR)/* -lm
