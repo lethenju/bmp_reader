@@ -6,6 +6,23 @@
 #define HEIGHT 50
 #define MAXBUF 10000000
 
+typedef struct pixel_t {
+    unsigned int r; //RED
+    unsigned int g; //GREEN
+    unsigned int b; //BLUE
+} pixel;
+
+typedef struct bmp_reader_context_t {
+    unsigned long size;
+    unsigned long width;
+    unsigned long height;
+    pixel** image_ptr;
+    char* buf;
+    char* ptr; 
+    FILE* fd;
+} bmp_reader_context;
+
+
 char ascii_tran[10] = {' ','.',
                         ':','-',
                         '+','=',
@@ -17,56 +34,50 @@ int main(int argc, char* argv[]) {
         printf("Usage : exe FILE\n");
         return -1;
     }
+    bmp_reader_context *ctx = (bmp_reader_context*) malloc(sizeof(bmp_reader_context));
 
-    FILE *fd = fopen(argv[1],"rb");
+    ctx->fd = fopen(argv[1],"rb");
     
-    unsigned char* buf =  (unsigned char*) malloc(MAXBUF*sizeof(char));
+    ctx->buf =  (char*) malloc(MAXBUF*sizeof(char));
+    ctx->ptr = ctx->buf;
 
-    unsigned char* ptr = buf;
-    fread(buf,MAXBUF,1,fd);    
+    char* buf = ctx->buf; // Simply put them locally in the function
+    char* ptr = ctx->ptr;
+
+    fread(buf,MAXBUF,1,ctx->fd);    
     int i;  
-    printf("\n");    
-    printf("magic number: %c%c",*ptr,*(ptr+1));
-    printf("\n");
-    ptr+=2;
-    unsigned long size = 0;
-    memcpy(&size,ptr,4);
+    ptr+=2; // Skipping magic number
+    memcpy(&(ctx->size),ptr,4);
     ptr+=4;
-    printf("Size : %lu",size);
-    printf("\n");    
-
+    printf("Size : %lu\n",ctx->size);
     ptr+=4;
-
-    printf("Offset : %d", *ptr);
+    printf("Offset : %d\n", *ptr);
     int offset = *ptr;
-    printf("\n");    
     ptr+=4;
 
 
     // DIB HEADER PARSING
     unsigned long sizeDIB = 0;
-    unsigned long width = 0;
-    unsigned long height = 0;
     
     memcpy(&sizeDIB,ptr,4);
     ptr+=4;
-    memcpy(&width,ptr,4);
+    memcpy(&(ctx->width),ptr,4);
     ptr+=4;    
-    memcpy(&height,ptr,4);
+    memcpy(&(ctx->height),ptr,4);
     ptr+=4;
     
     printf("Size DIB header : %lu\n",sizeDIB);
-    printf("width : %lu\n",width);
-    printf("height : %lu\n",height);
+    printf("width : %lu\n",ctx->width);
+    printf("height : %lu\n",ctx->height);
     
-    int screen[width][height]; 
+    int screen[ctx->width][ctx->height]; 
     ptr = buf+offset;
     float x,y;
 
-    for (y= height-1 ; y>=0; y-=1){
-        for (x=0; x<width; x+=1){
-            screen[(int)floor(x*WIDTH/width)][(int)floor(y*HEIGHT/height)] = 
-                (*ptr+*(ptr+1)+*(ptr+2))/(3*25);
+    for (y= ctx->height-1 ; y>=0; y-=1){
+        for (x=0; x<ctx->width; x+=1){
+            screen[(int)floor(x*WIDTH/ctx->width)][(int)floor(y*HEIGHT/ctx->height)] = 
+                (*ptr+*(ptr+1)+*(ptr+2))/(3*20);
             ptr+=3;
         }
     }
