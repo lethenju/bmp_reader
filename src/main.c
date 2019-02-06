@@ -73,22 +73,40 @@ int main(int argc, char* argv[]) {
     int screen[ctx->width][ctx->height]; 
     ptr = buf+offset;
     float x,y;
+    ctx->image_ptr = (pixel**) malloc(ctx->width*ctx->height*sizeof(pixel));
 
     for (y= ctx->height-1 ; y>=0; y-=1){
         for (x=0; x<ctx->width; x+=1){
+            pixel **image = ctx->image_ptr;
+            int num = x*y+x;
+            pixel *p = (pixel*) malloc(sizeof(pixel));
+            p->r = *ptr;
+            p->g = *(ptr+1);
+            p->b = *(ptr+2);
+            memcpy((void*) (image+num), (void*) p, sizeof(pixel));
             screen[(int)floor(x*WIDTH/ctx->width)][(int)floor(y*HEIGHT/ctx->height)] = 
-                (*ptr+*(ptr+1)+*(ptr+2))/(3*20);
+                abs((*ptr+*(ptr+1)+*(ptr+2))/(3*20));
             ptr+=3;
         }
     }
-
     for (y= 0 ; y<HEIGHT; y++){
         for (x=0; x<WIDTH; x++){
-            if (screen[(int)x][(int)y] >= 0 && screen[(int)x][(int)y]<10) {
+            int num = x*y+x;
+            pixel **image = ctx->image_ptr;
+            pixel *p = *(image+num);
+            int average = abs((p->b+p->g+p->r)/(3*20));
+
+            if (average >= 0 && average < 10) {
                 printf("%c",ascii_tran[screen[(int)x][(int)y]]);
             } else {
                 printf(" ");
             }
+          /*  if (screen[(int)x][(int)y] >= 0 && screen[(int)x][(int)y]<10) {
+                printf("%c",ascii_tran[screen[(int)x][(int)y]]);
+            } else {
+                printf(" ");
+            }
+            */
         }
         printf("\n");
     }
