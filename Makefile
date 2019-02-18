@@ -4,11 +4,9 @@ OBJECTS_DIR=objects
 SRC_DIR=src
 EXE_NAME=output
 
-output: main.o
-	gcc -o $(EXE_NAME) $(OBJECTS_DIR)/* -lm
 
-main.o: $(SRC_DIR)/main.c 
-	gcc -ggdb -c $(SRC_DIR)/main.c -o  $(OBJECTS_DIR)/main.o
+all: $(SRC_DIR)/main.c  $(SRC_DIR)/bmp_reader.c 
+	gcc -g $(SRC_DIR)/*.c -lm -o $(EXE_NAME)
 
 make clean:
 	rm  $(OBJECTS_DIR)/* learn
