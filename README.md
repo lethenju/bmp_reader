@@ -14,6 +14,9 @@ For now, it doesnt work for all types of images : just the simplest type of BMP 
 Here is a small example of how to use the application
 
 ```c
+#include <stdio.h>
+#include "bmp_reader.h"
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         printf("Usage : exe FILE\n");
