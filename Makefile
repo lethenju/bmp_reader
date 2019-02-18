@@ -9,6 +9,6 @@ all: $(SRC_DIR)/main.c  $(SRC_DIR)/bmp_reader.c
 	gcc -g $(SRC_DIR)/*.c -lm -o $(EXE_NAME)
 
 make clean:
-	rm  $(OBJECTS_DIR)/* learn
+	rm  $(OBJECTS_DIR)/* output
 
 make rebuild: clean all
