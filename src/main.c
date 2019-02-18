@@ -71,14 +71,14 @@ int main(int argc, char* argv[]) {
 
     ptr = buf+offset;
     float x,y;
-    int k = 0;
     ctx->image_ptr = malloc(ctx->height);
+
     for (y= 0 ; y< ctx->height; y++){
-        *(ctx->image_ptr+(int)(y)) = malloc(ctx->width*sizeof(pixel));
-        pixel *line = *(ctx->image_ptr + (int)y);
-        for (x=0; x<WIDTH ; x++){
+        *(ctx->image_ptr+(int)(y*(HEIGHT)/ctx->height)) = malloc(ctx->width*sizeof(pixel));
+        pixel *line = *(ctx->image_ptr + (int)(y*(HEIGHT)/ctx->height));
+        for (x=0; x<ctx->width ; x++){
             pixel *p = malloc(sizeof(pixel));
-            p = line + (int)x;
+            p = line + (int)(x*(WIDTH)/ctx->width);
             p->r = *ptr;
             p->g = *(ptr+1);
             p->b = *(ptr+2);
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
         }
     }
     for (y= 0 ; y<HEIGHT; y++){
-        pixel **line = ctx->image_ptr +HEIGHT - 1 - (int)y;
+        pixel **line = ctx->image_ptr + HEIGHT - 1 - (int)y;
         for (x=0; x<WIDTH; x++){
             pixel *p = *line+(int)x;
             int average = abs((p->b+p->g+p->r)/(3*20));
