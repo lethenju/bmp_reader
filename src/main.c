@@ -37,7 +37,6 @@ int main(int argc, char* argv[]) {
     bmp_reader_context *ctx = (bmp_reader_context*) malloc(sizeof(bmp_reader_context));
 
     ctx->fd = fopen(argv[1],"rb");
-    
     ctx->buf =  (char*) malloc(MAXBUF*sizeof(char));
     ctx->ptr = ctx->buf;
 
@@ -74,14 +73,9 @@ int main(int argc, char* argv[]) {
     float x,y;
     int k = 0;
     ctx->image_ptr = malloc(ctx->height);
-    for(y=0; y < HEIGHT; y++){
-        pixel *line = malloc(ctx->width*sizeof(pixel));
-        pixel *p =  *(ctx->image_ptr)+(int)y;
-        p = line;
-    }
-    printf("lol");
-    for (y= 0 ; y<HEIGHT; y++){
-        pixel *line = *(ctx->image_ptr) + (int)y;
+    for (y= 0 ; y< ctx->height; y++){
+        *(ctx->image_ptr+(int)(y)) = malloc(ctx->width*sizeof(pixel));
+        pixel *line = *(ctx->image_ptr + (int)y);
         for (x=0; x<WIDTH ; x++){
             pixel *p = malloc(sizeof(pixel));
             p = line + (int)x;
@@ -91,13 +85,11 @@ int main(int argc, char* argv[]) {
             ptr+=3;
         }
     }
-    k=0;
     for (y= 0 ; y<HEIGHT; y++){
-        pixel **line = ctx->image_ptr + (int)y;
+        pixel **line = ctx->image_ptr +HEIGHT - 1 - (int)y;
         for (x=0; x<WIDTH; x++){
             pixel *p = *line+(int)x;
             int average = abs((p->b+p->g+p->r)/(3*20));
-
             if (average >= 0 && average < 10) {
                 printf("%c",ascii_tran[average]);
             } else {
